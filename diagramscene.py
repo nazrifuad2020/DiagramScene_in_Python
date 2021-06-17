@@ -3,8 +3,8 @@ import sys
 from PyQt5.QtCore import QMimeData, QRect, QSize, pyqtSignal, QLineF, Qt, QPointF, QRectF, QSizeF, pyqtSlot  
 from PyQt5.QtGui import QBrush, QColor, QDrag, QFont, QIcon, QIntValidator, QKeySequence, QPen, QPainterPath, QPainter, QPixmap, QPolygonF, QTransform
 from PyQt5.QtWidgets import (QAbstractButton, QAction, QApplication, QButtonGroup, QComboBox, QFontComboBox, QGraphicsItem, QGraphicsTextItem, 
-                            QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsScene, QGraphicsView, QGridLayout, QHBoxLayout, QLabel, QListWidget, 
-                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
+                            QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsScene, 
+                            QGraphicsView, QGridLayout, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
 
 from enum import Enum
 
@@ -125,7 +125,7 @@ class DiagramItem(QGraphicsPolygonItem):
         if self.myDiagramType == DiagramItem.DiagramType.Conditional:
             if self.widget is None:
                 self.widget = QWidget()
-                label = QLabel(self.myName + ' is double-clicked')
+                label = QLabel('Item ' + self.myName + ' is double-clicked')
                 font = QFont()
                 font.setPointSize(20)
                 label.setFont(font)
@@ -137,7 +137,7 @@ class DiagramItem(QGraphicsPolygonItem):
         elif self.myDiagramType == DiagramItem.DiagramType.Io:
             if self.widget is None:
                 self.widget = QWidget()
-                label = QLabel(self.myName + ' is double-clicked')
+                label = QLabel('Item ' + self.myName + ' is double-clicked')
                 font = QFont()
                 font.setPointSize(20)
                 label.setFont(font)
@@ -149,7 +149,7 @@ class DiagramItem(QGraphicsPolygonItem):
         else:
             if self.widget is None:
                 self.widget = QWidget()
-                label = QLabel(self.myName + ' is double-clicked')
+                label = QLabel('Item ' + self.myName + ' is double-clicked')
                 font = QFont()
                 font.setPointSize(20)
                 label.setFont(font)
@@ -301,7 +301,7 @@ class DiagramScene(QGraphicsScene):
         MoveItem = 3
         DragScene = 4
 
-    itemInserted = pyqtSignal(DiagramItem, QPointF)
+    itemInserted = pyqtSignal(DiagramItem)
     textInserted = pyqtSignal(QGraphicsTextItem)
     itemSelected = pyqtSignal(QGraphicsItem)
 
@@ -394,9 +394,18 @@ class DiagramScene(QGraphicsScene):
             item.setBrush(self.myItemColor)
             self.addItem(item)
             item.setPos(posF)
+
+            itemLabel = str(item.diagramType())[12:] + '_' + str(self.typeCount[item.diagramType()]+1)
+            item.setMyName(itemLabel)
             textPos = QPointF(posF.x(), posF.y()+item.boundingRect().height()/2+5)
 
-            self.itemInserted.emit(item, textPos)
+            self.setMode(DiagramScene.Mode.InsertText)
+            self.insertItem(textPos, itemLabel)
+            textItem = self.items()[0]
+            textItem.setItemOwner(item)
+            item.setTextItemOwnership(textItem)
+
+            self.itemInserted.emit(item)
 
             self.typeCount[self.myItemType] += 1
         elif self.myMode == DiagramScene.Mode.InsertLine:
@@ -597,7 +606,7 @@ class MainWindow(QMainWindow):
 
         self.scene = DiagramScene(self.itemMenu, self)
         self.scene.setSceneRect(QRectF(0, 0, 5000, 5000))
-        self.scene.itemInserted[DiagramItem, QPointF].connect(self.itemInserted)
+        self.scene.itemInserted[DiagramItem].connect(self.itemInserted)
         self.scene.textInserted[QGraphicsTextItem].connect(self.textInserted)
         self.scene.itemSelected[QGraphicsItem].connect(self.itemSelected)
         self.createToolbars()
@@ -615,16 +624,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Diagramscene in Python (with additional stuffs)')
         self.setUnifiedTitleAndToolBarOnMac(True)
 
-    @pyqtSlot(DiagramItem, QPointF)
-    def itemInserted(self, item, textpos):
-        self.scene.setMode(DiagramScene.Mode.InsertText)
-        itemLabel = str(item.diagramType())[12:] + '_' + str(self.scene.typeCount[item.diagramType()]+1)
-        item.setMyName(itemLabel)
-        self.scene.insertItem(textpos, itemLabel)
-        textItem = self.scene.items()[0]
-        textItem.setItemOwner(item)
-        item.setTextItemOwnership(textItem)
-
+    @pyqtSlot(DiagramItem)
+    def itemInserted(self, item):
         self.pointerTypeGroup.button(DiagramScene.Mode.MoveItem.value).setChecked(True)
         self.scene.setMode(DiagramScene.Mode(self.pointerTypeGroup.checkedId()))
         listWidget = self.toolBox.currentWidget()
