@@ -3,8 +3,8 @@ import sys
 from PyQt5.QtCore import QMimeData, QRect, QSize, pyqtSignal, QLineF, Qt, QPointF, QRectF, QSizeF, pyqtSlot  
 from PyQt5.QtGui import QBrush, QColor, QDrag, QFont, QIcon, QIntValidator, QKeySequence, QPen, QPainterPath, QPainter, QPixmap, QPolygonF, QTransform
 from PyQt5.QtWidgets import (QAbstractButton, QAction, QApplication, QButtonGroup, QComboBox, QFontComboBox, QGraphicsItem, QGraphicsTextItem, 
-                            QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsScene, 
-                            QGraphicsView, QGridLayout, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
+                            QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsScene, QGraphicsView, QGridLayout, QHBoxLayout, QLabel, QListWidget, 
+                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
 
 from enum import Enum
 
