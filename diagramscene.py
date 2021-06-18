@@ -4,7 +4,7 @@ from PyQt5.QtCore import QMimeData, QRect, QSize, pyqtSignal, QLineF, Qt, QPoint
 from PyQt5.QtGui import QBrush, QColor, QDrag, QFont, QIcon, QIntValidator, QKeySequence, QPen, QPainterPath, QPainter, QPixmap, QPolygonF, QTransform
 from PyQt5.QtWidgets import (QAbstractButton, QAction, QApplication, QButtonGroup, QComboBox, QFontComboBox, QGraphicsItem, QGraphicsTextItem, 
                             QGraphicsLineItem, QGraphicsPolygonItem, QGraphicsScene, QGraphicsView, QGridLayout, QHBoxLayout, QLabel, QListWidget, 
-                             QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
+                            QListWidgetItem, QMainWindow, QMenu, QMessageBox, QSizePolicy, QToolBox, QToolButton, QVBoxLayout, QWidget)
 
 from enum import Enum
 
@@ -919,47 +919,37 @@ class MainWindow(QMainWindow):
 
     def createToolBox(self):
         self.buttonGroup = QButtonGroup(self)
-        self.buttonGroup.setExclusive(False)
-        self.buttonGroup.buttonClicked[QAbstractButton].connect(self.buttonGroupClicked)
-        layout = QGridLayout()
-        layout.addWidget(self.createCellWidget('Conditional', DiagramItem.DiagramType.Conditional), 0, 0)
-        layout.addWidget(self.createCellWidget('Process', DiagramItem.DiagramType.Step), 0, 1)
-        layout.addWidget(self.createCellWidget('Input/Output', DiagramItem.DiagramType.Io), 1, 0)
-
-        textButton = QToolButton()
-        textButton.setCheckable(True)
-        self.buttonGroup.addButton(textButton, InsertTextButton)
-        filename = os.path.join(DIR_NAME, 'images\\textpointer.png')
-        textButton.setIcon(QIcon(QPixmap(filename)))
-        textButton.setIconSize(QSize(50, 50))
-        textLayout = QGridLayout()
-        textLayout.addWidget(textButton, 0, 0, Qt.AlignHCenter)
-        textLayout.addWidget(QLabel('Text'), 1, 0, Qt.AlignCenter)
-        textWidget = QWidget()
-        textWidget.setLayout(textLayout)
-        layout.addWidget(textWidget, 1, 1)
-
-        layout.setRowStretch(3, 10)
-        layout.setColumnStretch(2, 10)
-
-        itemWidget = QWidget()
-        itemWidget.setLayout(layout)
+        # self.buttonGroup.setExclusive(False)
+        # self.buttonGroup.buttonClicked[QAbstractButton].connect(self.buttonGroupClicked)
+        # layout = QGridLayout()
+        # layout.addWidget(self.createCellWidget('Conditional', DiagramItem.DiagramType.Conditional), 0, 0)
+        # layout.addWidget(self.createCellWidget('Process', DiagramItem.DiagramType.Step), 0, 1)
+        # layout.addWidget(self.createCellWidget('Input/Output', DiagramItem.DiagramType.Io), 1, 0)
+        # textButton = QToolButton()
+        # textButton.setCheckable(True)
+        # self.buttonGroup.addButton(textButton, InsertTextButton)
+        # filename = os.path.join(DIR_NAME, 'images\\textpointer.png')
+        # textButton.setIcon(QIcon(QPixmap(filename)))
+        # textButton.setIconSize(QSize(50, 50))
+        # textLayout = QGridLayout()
+        # textLayout.addWidget(textButton, 0, 0, Qt.AlignHCenter)
+        # textLayout.addWidget(QLabel('Text'), 1, 0, Qt.AlignCenter)
+        # textWidget = QWidget()
+        # textWidget.setLayout(textLayout)
+        # layout.addWidget(textWidget, 1, 1)
+        # layout.setRowStretch(3, 10)
+        # layout.setColumnStretch(2, 10)
+        # itemWidget = QWidget()
+        # itemWidget.setLayout(layout)
 
         listWidget = CellListWidget()
         listWidget.setViewMode(QListWidget.IconMode)
         listWidget.setAcceptDrops(False)
-        #listWidget.clearSelection()
         listWidget.setSpacing(10)
         listWidget.addItem(self.createCellListWidgetItem('Conditional', DiagramItem.DiagramType.Conditional))
         listWidget.addItem(self.createCellListWidgetItem('Process', DiagramItem.DiagramType.Step))
         listWidget.addItem(self.createCellListWidgetItem('Input/Output', DiagramItem.DiagramType.Io))
         #listWidget.addItem(self.createCellListWidgetItem('Start/End', DiagramItem.DiagramType.StartEnd))
-        
-        # listItem = QListWidgetItem('Text')
-        # filename = os.path.join(DIR_NAME, 'images\\textpointer.png')
-        # listItem.setIcon(QIcon(QPixmap(filename)))
-        # listItem.setData(Qt.UserRole, InsertTextButton)
-        # listWidget.addItem(listItem)
 
         self.backgroundButtonGroup = QButtonGroup(self)
         self.backgroundButtonGroup.buttonClicked[QAbstractButton].connect(self.backgroundButtonGroupClicked)
@@ -982,9 +972,9 @@ class MainWindow(QMainWindow):
 
         self.toolBox = QToolBox()
         self.toolBox.setSizePolicy(QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Ignored))
-        self.toolBox.setMinimumWidth(itemWidget.sizeHint().width())
-        self.toolBox.addItem(listWidget, 'Basic Flowchart Shapes')
+        self.toolBox.setMinimumWidth(backGroundWidget.sizeHint().width())
         #self.toolBox.addItem(itemWidget, 'Basic Flowchart Shapes')
+        self.toolBox.addItem(listWidget, 'Basic Flowchart Shapes')
         self.toolBox.addItem(backGroundWidget, 'Backgrounds')
 
     def createMenus(self):
